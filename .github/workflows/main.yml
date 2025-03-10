@@ -1,0 +1,45 @@
+name: CI Pipeline for Todo List App
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16.x'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Run Tests
+      run: npm test
+
+    - name: Build Application
+      run: npm run build
+      env:
+        NODE_ENV: production
+
+    - name: Lint Code (Optional)
+      run: npm run lint
+
+    - name: Archive Production Artifacts
+      run: zip -r todo-list-app.zip .
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: todo-list-app
+        path: todo-list-app.zip
